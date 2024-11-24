@@ -1,6 +1,7 @@
 {
-    "name": "tomkyle/boilerplate-php",
-    "description": "PHP Package boilerplate",
+    "name": "tomkyle/matomo-api-client",
+    "description": "Client library for interacting with the Matomo API. Supports retry logic and PSR-6 caches.",
+    "keywords": ["matomo", "api", "client"],
 
     "authors": [{
         "name": "Carsten Witt",
@@ -31,7 +32,7 @@
         "psr/http-client": "^1.0",
         "psr/log": "^2.0|^3.0",
         "guzzlehttp/psr7": "^2.7",
-				"guzzlehttp/guzzle": "^7.8"
+        "guzzlehttp/guzzle": "^7.8"
     },
 
     "require-dev": {
@@ -40,10 +41,5 @@
         "phpstan/phpstan": "^1.0|^2.0",
         "tomkyle/find-run-test": "^1.0",
         "rector/rector": "^1.2"
-    },
-
-    "suggest": {
-        "monolog/monolog": "PSR-3 Logger of choice",
-        "symfony/cache": "PSR-6 and PSR-16 Cache engines"
     }
 }
