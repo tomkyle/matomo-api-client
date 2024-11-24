@@ -1,0 +1,19 @@
+# phpstan.neon.dist
+
+parameters:
+    level: 9
+    paths:
+        - src
+
+    ignoreErrors:
+
+        # This is caused by member type declaration in \Psr\Log\LoggerAwareTrait 
+        # which allows member var $logger to be null. In fact, the consuming classes
+        # do always set a Logger instance in constrcutor, so $logger is never null.
+
+        - message: '#Cannot call method log\(\) on Psr\\Log\\LoggerInterface\|null\.#'
+          paths:
+            - %currentWorkingDirectory%/src/Psr6CacheMatomoApiClient.php
+            - %currentWorkingDirectory%/src/RetryingMatomoApiClient.php
+            - %currentWorkingDirectory%/src/MatomoApiClient.php
+            - %currentWorkingDirectory%/src/ProcessingMatomoApiClient.php
