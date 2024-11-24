@@ -1,8 +1,8 @@
 <h1 align="center">Matomo API Client</h1>
 
-[![Packagist](https://img.shields.io/packagist/v/tomkyle/boilerplate-php.svg?style=flat)](https://packagist.org/packages/tomkyle/boilerplate-php )
-[![PHP version](https://img.shields.io/packagist/php-v/tomkyle/boilerplate-php.svg)](https://packagist.org/packages/tomkyle/boilerplate-php )
-[![PHP Composer](https://github.com/tomkyle/boilerplate-php/actions/workflows/php.yml/badge.svg)](https://github.com/tomkyle/boilerplate-php/actions/workflows/php.yml)
+[![Packagist](https://img.shields.io/packagist/v/tomkyle/matomo-api-client.svg?style=flat)](https://packagist.org/packages/tomkyle/matomo-api-client )
+[![PHP version](https://img.shields.io/packagist/php-v/tomkyle/matomo-api-client.svg)](https://packagist.org/packages/tomkyle/matomo-api-client )
+[![PHP Composer](https://github.com/tomkyle/matomo-api-client/actions/workflows/php.yml/badge.svg)](https://github.com/tomkyle/matomo-api-client/actions/workflows/php.yml)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 
 **A PHP client library for interacting with the Matomo API, providing robust and extensible functionality for managing and querying Matomo analytics data.**
