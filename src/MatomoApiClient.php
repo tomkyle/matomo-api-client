@@ -81,14 +81,31 @@ class MatomoApiClient implements MatomoApiClientInterface
             $response = $this->httpClient->sendRequest($request);
 
             $result = $this->handleResponse($response, $loggerContext);
+
             if (is_array($result)) {
-                return $result;                
+                $this->checkForErrors($result);
+                return $result;
             }
+
             throw new \UnexpectedValueException("Expected Matomo API response to be an array.");
         } catch (\Throwable $throwable) {
             throw (new MatomoApiClientException("Matomo API request failed.", 0, $throwable))
                 ->setApi($this->uri)
                 ->setParams($params);
+        }
+    }
+
+
+    /**
+     * @param array<string,string> $response
+     * @throws MatomoApiClientException
+     */
+    private function checkForErrors(array $response): void
+    {
+        if (isset($response['result']) && $response['result'] === 'error') {
+            $msg = $response['message'] ?? "(no message)";
+
+            throw new MatomoApiClientException($msg);
         }
     }
 

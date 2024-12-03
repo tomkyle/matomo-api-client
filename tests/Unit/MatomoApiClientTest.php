@@ -137,4 +137,45 @@ class MatomoApiClientTest extends TestCase
 
         $matomoApiClient->request($params);
     }
+
+    /**
+     * Test handling JSON decoding error during response handling.
+     */
+    public function testHandleResponseJsonError()
+    {
+        $mockHandler = new MockHandler([
+            new Response(200, [], 'invalid json'),
+        ]);
+        $handlerStack = HandlerStack::create($mockHandler);
+        $httpClient = new Client(['handler' => $handlerStack]);
+
+        $matomoApiClient = new MatomoApiClient($this->api, $this->defaults, $this->logger, $httpClient, $this->requestFactory);
+
+        $params = ['idSite' => '1', 'date' => 'today'];
+
+        $this->expectException(MatomoApiClientException::class);
+
+        $matomoApiClient->request($params);
+    }
+
+    /**
+     * Test handling API error response.
+     */
+    public function testHandleApiErrorResponse()
+    {
+        $mockHandler = new MockHandler([
+            new Response(200, [], '{"result": "error", "message": "An error occurred"}'),
+        ]);
+        $handlerStack = HandlerStack::create($mockHandler);
+        $httpClient = new Client(['handler' => $handlerStack]);
+
+        $matomoApiClient = new MatomoApiClient($this->api, $this->defaults, $this->logger, $httpClient, $this->requestFactory);
+
+        $params = ['idSite' => '1', 'date' => 'today'];
+
+        $this->expectException(MatomoApiClientException::class);
+        $this->expectExceptionMessage('Matomo API request failed.');
+
+        $matomoApiClient->request($params);
+    }
 }
