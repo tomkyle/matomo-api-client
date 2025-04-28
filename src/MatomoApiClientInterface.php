@@ -19,8 +19,8 @@ interface MatomoApiClientInterface extends Log\LoggerAwareInterface
      * A second parameter 'method' may be passed to allow overdding API method.
      *
      * @param  array<string,string>  $params API params
-     * @return array<string|int,mixed> API result
+     * @return array<mixed,mixed> API result
      */
-    public function request(array $params, string $method = null): array;
+    public function request(array $params, ?string $method = null): array;
 
 }

@@ -21,7 +21,7 @@ class ProcessingMatomoApiClient implements MatomoApiClientInterface
      */
     public $processors = [];
 
-    public function __construct(MatomoApiClientInterface $matomoApiClient, Log\LoggerInterface $logger = null)
+    public function __construct(MatomoApiClientInterface $matomoApiClient, ?Log\LoggerInterface $logger = null)
     {
         $this->setMatomoClient($matomoApiClient);
         $this->setLogger($logger ?: new Log\NullLogger());
@@ -32,7 +32,7 @@ class ProcessingMatomoApiClient implements MatomoApiClientInterface
      *
      * @param array<string,string> $params API parameters for the request.
      * @param string|null $method Optional: Specific method to override the default API method.
-     * @return array<string|int,mixed> The API response decoded into an associative array.
+     * @return array<mixed,mixed> The API response decoded into an associative array.
      */
     #[\Override]
     public function request(array $params, ?string $method = null): array

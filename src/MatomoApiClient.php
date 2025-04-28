@@ -62,7 +62,7 @@ class MatomoApiClient implements MatomoApiClientInterface
      *
      * @param array<string,string> $params API parameters for the request.
      * @param string|null $method Optional specific API method.
-     * @return array<string|int,mixed> The decoded JSON response as an associative array.
+     * @return array<mixed,mixed> The decoded JSON response as an associative array.
      *
      * @throws MatomoApiClientException On HTTP or decoding errors.
      */
@@ -82,12 +82,10 @@ class MatomoApiClient implements MatomoApiClientInterface
 
             $result = $this->handleResponse($response, $loggerContext);
 
-            if (is_array($result)) {
-                $this->checkForErrors($result);
-                return $result;
-            }
 
-            throw new \UnexpectedValueException("Expected Matomo API response to be an array.");
+            $this->checkForErrors($result);
+            return $result;
+
         } catch (\Throwable $throwable) {
             throw (new MatomoApiClientException("Matomo API request failed.", 0, $throwable))
                 ->setApi($this->uri)
@@ -97,7 +95,7 @@ class MatomoApiClient implements MatomoApiClientInterface
 
 
     /**
-     * @param array<string,string> $response
+     * @param array<mixed,mixed> $response
      * @throws MatomoApiClientException
      */
     private function checkForErrors(array $response): void
@@ -116,16 +114,20 @@ class MatomoApiClient implements MatomoApiClientInterface
      *
      * @param ResponseInterface $response The response to process.
      * @param array<string,string> $context Context for logging.
-     * @return mixed Decoded JSON response.
+     * @return array<mixed,mixed> Decoded JSON response.
      *
      * @throws MatomoApiClientException If decoding fails.
      */
-    private function handleResponse(ResponseInterface $response, array $context): mixed
+    private function handleResponse(ResponseInterface $response, array $context): array
     {
         try {
             $body = $response->getBody()->__toString();
             $this->logger->log(Log\LogLevel::DEBUG, "Decoding Matomo API response", $context);
-            return json_decode($body, associative: true, flags: \JSON_THROW_ON_ERROR);
+            $result = json_decode($body, associative: true, flags: \JSON_THROW_ON_ERROR);
+            if (!is_array($result)) {
+                throw new \UnexpectedValueException("Expected Matomo API response to be an array.");
+            }
+            return $result;
         } catch (\JsonException $jsonException) {
             throw (new MatomoApiClientException("Failed to decode the Matomo API response.", 0, $jsonException))
                 ->setApi($this->uri)

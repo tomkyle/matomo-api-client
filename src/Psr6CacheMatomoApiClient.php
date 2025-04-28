@@ -31,7 +31,7 @@ class Psr6CacheMatomoApiClient implements MatomoApiClientInterface
      * @param MatomoApiClientInterface $matomoApiClient The Matomo API client.
      * @param Log\LoggerInterface $logger PSR-3 Logger, default: null
      */
-    public function __construct(CacheItemPoolInterface $cacheItemPool, MatomoApiClientInterface $matomoApiClient, Log\LoggerInterface $logger = null)
+    public function __construct(CacheItemPoolInterface $cacheItemPool, MatomoApiClientInterface $matomoApiClient, ?Log\LoggerInterface $logger = null)
     {
         $this->setMatomoClient($matomoApiClient);
         $this->setCache($cacheItemPool);
@@ -43,10 +43,10 @@ class Psr6CacheMatomoApiClient implements MatomoApiClientInterface
      *
      * @param array<string,string> $params API parameters for the request.
      * @param string|null $method Optional: Specific method to override the default API method.
-     * @return array<string|int,mixed> The API response decoded into an associative array.
+     * @return array<mixed,mixed> The API response decoded into an associative array.
      */
     #[\Override]
-    public function request(array $params, string $method = null): array
+    public function request(array $params, ?string $method = null): array
     {
         // Generate a unique cache key based on the parameters and method
         $cacheKey = $this->generateCacheKey($params, $method);
@@ -60,6 +60,7 @@ class Psr6CacheMatomoApiClient implements MatomoApiClientInterface
             if (is_array($result)) {
                 return $result;                
             }
+
             throw new \UnexpectedValueException("Expected cached Matomo API response to be an array.");
         }
 

@@ -16,7 +16,7 @@ class RetryingMatomoApiClient implements MatomoApiClientInterface
     use MatomoApiClientTrait;
     use Log\LoggerAwareTrait;
 
-    public function __construct(MatomoApiClientInterface $matomoApiClient, protected int $max_attempts = 3, protected int $wait_seconds = 5, Log\LoggerInterface $logger = null)
+    public function __construct(MatomoApiClientInterface $matomoApiClient, protected int $max_attempts = 3, protected int $wait_seconds = 5, ?Log\LoggerInterface $logger = null)
     {
         $this->setMatomoClient($matomoApiClient);
         $this->setLogger($logger ?: new Log\NullLogger());
