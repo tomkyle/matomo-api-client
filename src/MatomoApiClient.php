@@ -183,7 +183,7 @@ class MatomoApiClient implements MatomoApiClientInterface
     }
 
     /**
-     * Merges new parameters into the existing defaults.
+     * Merges new API parameters into the existing defaults.
      *
      * @param array<string,string> $defaults
      */
