@@ -42,4 +42,37 @@ trait MatomoApiClientTrait
         return $this->matomo_client;
     }
 
+
+    /**
+     * @inheritDoc
+     */
+    public function getDefaults(): array
+    {
+        if ($this->matomo_client instanceOf DefaultsAwareInterface) {
+            return $this->matomo_client->getDefaults();
+        }
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setDefaults(array $defaults): self
+    {
+        if ($this->matomo_client instanceOf DefaultsAwareInterface) {
+            $this->matomo_client->setDefaults($defaults);
+        }
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function mergeDefaults(array $defaults): self
+    {
+        if ($this->matomo_client instanceOf DefaultsAwareInterface) {
+            $this->matomo_client->mergeDefaults($defaults);
+        }
+        return $this;
+    }
 }

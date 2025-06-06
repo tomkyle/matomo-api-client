@@ -11,7 +11,7 @@ namespace tomkyle\MatomoApiClient;
 
 use Psr\Log;
 
-class ProcessingMatomoApiClient implements MatomoApiClientInterface
+class ProcessingMatomoApiClient implements MatomoApiClientInterface, DefaultsAwareInterface
 {
     use MatomoApiClientTrait;
     use Log\LoggerAwareTrait;

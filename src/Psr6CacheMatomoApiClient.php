@@ -12,7 +12,7 @@ namespace tomkyle\MatomoApiClient;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log;
 
-class Psr6CacheMatomoApiClient implements MatomoApiClientInterface
+class Psr6CacheMatomoApiClient implements MatomoApiClientInterface, DefaultsAwareInterface
 {
     use MatomoApiClientTrait;
     use Log\LoggerAwareTrait;
@@ -23,7 +23,7 @@ class Psr6CacheMatomoApiClient implements MatomoApiClientInterface
      * @var CacheItemPoolInterface
      */
     protected $cache;
-    
+
     /**
      * Constructs a new cache proxy instance.
      *
@@ -58,7 +58,7 @@ class Psr6CacheMatomoApiClient implements MatomoApiClientInterface
             $this->logger->log(Log\LogLevel::INFO, "Matomo API response found in cache", ['cacheKey' => $cacheKey]);
             $result = $cacheItem->get();
             if (is_array($result)) {
-                return $result;                
+                return $result;
             }
 
             throw new \UnexpectedValueException("Expected cached Matomo API response to be an array.");

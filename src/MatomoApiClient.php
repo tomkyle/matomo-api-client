@@ -21,7 +21,7 @@ use GuzzleHttp\Psr7\HttpFactory;
 /**
  * Provides a client for interacting with the Matomo API.
  */
-class MatomoApiClient implements MatomoApiClientInterface
+class MatomoApiClient implements MatomoApiClientInterface, DefaultsAwareInterface
 {
     use Log\LoggerAwareTrait;
 
@@ -162,9 +162,7 @@ class MatomoApiClient implements MatomoApiClientInterface
     }
 
     /**
-     * Gets default API parameters.
-     *
-     * @return array<string,string>
+     * @inheritDoc
      */
     public function getDefaults(): array
     {
@@ -172,9 +170,7 @@ class MatomoApiClient implements MatomoApiClientInterface
     }
 
     /**
-     * Sets default API parameters.
-     *
-     * @param array<string,string> $defaults
+     * @inheritDoc
      */
     public function setDefaults(array $defaults): self
     {
@@ -183,9 +179,7 @@ class MatomoApiClient implements MatomoApiClientInterface
     }
 
     /**
-     * Merges new API parameters into the existing defaults.
-     *
-     * @param array<string,string> $defaults
+     * @inheritDoc
      */
     public function mergeDefaults(array $defaults): self
     {
