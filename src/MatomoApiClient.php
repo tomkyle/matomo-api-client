@@ -36,6 +36,14 @@ class MatomoApiClient implements MatomoApiClientInterface
     protected RequestFactoryInterface $requestFactory;
 
     /**
+     * @var array<string,string> Default parameters for Matomo API requests.
+     */
+    protected array $defaults = [
+        'module' => 'API',
+        'format' => 'JSON',
+    ];
+
+    /**
      * Initializes the client with the API endpoint, default parameters, and optional HTTP client.
      *
      * @param UriInterface $uri The Matomo API endpoint URL.
@@ -46,11 +54,12 @@ class MatomoApiClient implements MatomoApiClientInterface
      */
     public function __construct(
         protected UriInterface $uri,
-        protected array $defaults = [],
+        array $defaults = [],
         ?Log\LoggerInterface $logger = null,
         ?ClientInterface $httpClient = null,
         ?RequestFactoryInterface $requestFactory = null,
     ) {
+        $this->mergeDefaults($defaults);
         $this->setLogger($logger ?: new Log\NullLogger());
         $this->httpClient = $httpClient ?: new HttpClient();
         $this->requestFactory = $requestFactory ?: new HttpFactory();

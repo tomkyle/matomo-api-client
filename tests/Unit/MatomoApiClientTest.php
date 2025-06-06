@@ -71,11 +71,12 @@ class MatomoApiClientTest extends TestCase
     public function testMergeDefaults()
     {
         $matomoApiClient = new MatomoApiClient($this->api, $this->defaults);
+        $actualDefaults = $matomoApiClient->getDefaults();
 
         $mergeDefaults = ['idSite' => '1'];
         $matomoApiClient->mergeDefaults($mergeDefaults);
 
-        $expected = array_merge($this->defaults, $mergeDefaults);
+        $expected = array_merge($actualDefaults, $mergeDefaults);
         $this->assertEquals($expected, $matomoApiClient->getDefaults());
     }
 
