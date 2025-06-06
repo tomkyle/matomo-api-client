@@ -49,7 +49,9 @@ class Psr6CacheMatomoApiClient implements MatomoApiClientInterface, DefaultsAwar
     public function request(array $params, ?string $method = null): array
     {
         // Generate a unique cache key based on the parameters and method
-        $cacheKey = $this->generateCacheKey($params, $method);
+        $defaults = $this->getDefaults();
+        $cacheParams = array_merge($defaults, $params);
+        $cacheKey = $this->generateCacheKey($cacheParams, $method);
 
         // Attempt to retrieve the response from cache
         $this->getCache();
