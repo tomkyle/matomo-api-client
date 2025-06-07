@@ -47,7 +47,7 @@ class MatomoApiClient implements MatomoApiClientInterface, DefaultsAwareInterfac
      * Initializes the client with the API endpoint, default parameters, and optional HTTP client.
      *
      * @param UriInterface $uri The Matomo API endpoint URL.
-     * @param array<string,string> $defaults Default Matomo API request parameters.
+     * @param array<string,mixed> $defaults Default Matomo API request parameters.
      * @param Log\LoggerInterface|null $logger Optional PSR-3 Logger (defaults to NullLogger).
      * @param ClientInterface|null $httpClient Optional PSR-18 client (defaults to Guzzle).
      * @param RequestFactoryInterface|null $requestFactory Optional PSR-17 Request factory (defaults to Guzzle).
