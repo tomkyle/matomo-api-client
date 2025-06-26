@@ -1,7 +1,9 @@
 <?php
 
 /**
- * tomkyle/matomo-api-client (https://github.com/tomkyle/matomo-api-client)
+ * This file is part of tomkyle/matomo-api-client
+ *
+ * Client library for interacting with the Matomo API. Supports retry logic and PSR-6 caches.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,11 +13,16 @@ declare(strict_types=1);
 
 namespace tests\Unit;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use tomkyle\MatomoApiClient\MatomoApiClientInterface;
 use tomkyle\MatomoApiClient\ProcessingMatomoApiClient;
 
+/**
+ * @internal
+ */
+#[CoversNothing]
 class ProcessingMatomoApiClientTest extends TestCase
 {
     private MatomoApiClientInterface $matomoApiClient;
@@ -49,7 +56,8 @@ class ProcessingMatomoApiClientTest extends TestCase
             ->expects($this->once())
             ->method('request')
             ->with($params, $method)
-            ->willReturn($apiResponse);
+            ->willReturn($apiResponse)
+        ;
 
         $result = $this->processingMatomoApiClient->request($params, $method);
 
@@ -71,11 +79,12 @@ class ProcessingMatomoApiClientTest extends TestCase
             ->expects($this->once())
             ->method('request')
             ->with($params, $method)
-            ->willReturn($initialResponse);
+            ->willReturn($initialResponse)
+        ;
 
-        $processor1 = fn(array $response, array $params) => $processedResponse1;
+        $processor1 = fn (array $response, array $params) => $processedResponse1;
 
-        $processor2 = fn(array $response, array $params) => $processedResponse2;
+        $processor2 = fn (array $response, array $params) => $processedResponse2;
 
         $this->processingMatomoApiClient->setProcessors([$processor1, $processor2]);
 
@@ -85,7 +94,8 @@ class ProcessingMatomoApiClientTest extends TestCase
             ->method('log')
             ->willReturnCallback(function ($level, $message) use (&$loggedMessages) {
                 $loggedMessages[] = ['level' => $level, 'message' => $message];
-            });
+            })
+        ;
 
         $result = $this->processingMatomoApiClient->request($params, $method);
 
@@ -105,9 +115,9 @@ class ProcessingMatomoApiClientTest extends TestCase
      */
     public function testAddProcessor(): void
     {
-        $processor1 = fn(array $response, array $params) => $response;
+        $processor1 = fn (array $response, array $params) => $response;
 
-        $processor2 = fn(array $response, array $params) => $response;
+        $processor2 = fn (array $response, array $params) => $response;
 
         $this->processingMatomoApiClient->addProcessor($processor1);
         $this->processingMatomoApiClient->addProcessor($processor2);

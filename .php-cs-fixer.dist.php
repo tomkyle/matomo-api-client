@@ -1,10 +1,21 @@
 <?php
 $header = <<<EOF
-tomkyle/matomo-api-client (https://github.com/tomkyle/matomo-api-client)
+This file is part of {{name}}
+
+{{description}}
 
 For the full copyright and license information, please view the LICENSE
 file that was distributed with this source code.
 EOF;
+
+$info = json_decode(file_get_contents(__DIR__ . '/composer.json'), true);
+
+$header = trim(str_replace(
+    ['{{name}}', '{{description}}' ],
+    [$info['name'], $info['description'] ?? null],
+    $header
+));
+
 
 $finder = PhpCsFixer\Finder::create()
     ->in([
@@ -12,7 +23,10 @@ $finder = PhpCsFixer\Finder::create()
         __DIR__ . '/tests'
     ]);
 
-return (new PhpCsFixer\Config())->setRules([
+return (new PhpCsFixer\Config())
+->setParallelConfig(PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect())
+->setFinder($finder)
+->setRules([
     '@PER-CS' => true,
 
     'header_comment' => [
@@ -21,4 +35,4 @@ return (new PhpCsFixer\Config())->setRules([
         'location' => 'after_open',
         'separate' => 'both',
     ]
-])->setFinder($finder);
+]);

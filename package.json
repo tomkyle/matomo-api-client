@@ -12,10 +12,10 @@
 
     "phpstan": "./vendor/bin/phpstan --no-progress analyse",
 
-    "phpcs"       : "./vendor/bin/php-cs-fixer fix --verbose --diff --dry-run",
+    "phpcs": "npm run phpcs:apply -- --dry-run",
     "phpcs:apply" : "./vendor/bin/php-cs-fixer fix --verbose --diff",
 
-    "rector": "./vendor/bin/rector process --dry-run",
+    "rector": "npm run rector:apply -- --dry-run",
     "rector:apply": "./vendor/bin/rector process",
 
     "phpunit": "./vendor/bin/phpunit",

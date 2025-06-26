@@ -1,7 +1,9 @@
 <?php
 
 /**
- * tomkyle/matomo-api-client (https://github.com/tomkyle/matomo-api-client)
+ * This file is part of tomkyle/matomo-api-client
+ *
+ * Client library for interacting with the Matomo API. Supports retry logic and PSR-6 caches.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -17,10 +19,16 @@ class ProcessingMatomoApiClient implements MatomoApiClientInterface, DefaultsAwa
     use Log\LoggerAwareTrait;
 
     /**
-     * @var callable[] $processors An array to hold processor instances.
+     * @var callable[] an array to hold processor instances
      */
     public $processors = [];
 
+    /**
+     * Constructs a processing proxy instance.
+     *
+     * @param MatomoApiClientInterface $matomoApiClient the Matomo API client
+     * @param null|Log\LoggerInterface $logger          PSR-3 Logger, default: null
+     */
     public function __construct(MatomoApiClientInterface $matomoApiClient, ?Log\LoggerInterface $logger = null)
     {
         $this->setMatomoClient($matomoApiClient);
@@ -30,9 +38,10 @@ class ProcessingMatomoApiClient implements MatomoApiClientInterface, DefaultsAwa
     /**
      * Sends a request to the Matomo API and processes the result.
      *
-     * @param array<string,string> $params API parameters for the request.
-     * @param string|null $method Optional: Specific method to override the default API method.
-     * @return array<mixed,mixed> The API response decoded into an associative array.
+     * @param array<string,string> $params API parameters for the request
+     * @param null|string          $method optional: Specific method to override the default API method
+     *
+     * @return array<mixed,mixed> the API response decoded into an associative array
      */
     #[\Override]
     public function request(array $params, ?string $method = null): array
@@ -44,7 +53,7 @@ class ProcessingMatomoApiClient implements MatomoApiClientInterface, DefaultsAwa
         unset($loggerContextPamams['token_auth']);
 
         foreach ($this->processors as $processor) {
-            $msg = sprintf("Processing Matomo result using %s", get_debug_type($processor));
+            $msg = sprintf('Processing Matomo result using %s', get_debug_type($processor));
             $this->logger->log(Log\LogLevel::DEBUG, $msg, ['params' => $loggerContextPamams, 'result' => $api_result]);
             $api_result = $processor($api_result, $params);
         }
@@ -60,6 +69,7 @@ class ProcessingMatomoApiClient implements MatomoApiClientInterface, DefaultsAwa
     public function setProcessors(array $processors): self
     {
         $this->processors = $processors;
+
         return $this;
     }
 
@@ -69,6 +79,7 @@ class ProcessingMatomoApiClient implements MatomoApiClientInterface, DefaultsAwa
     public function addProcessor(callable $processor): self
     {
         $this->processors[] = $processor;
+
         return $this;
     }
 }

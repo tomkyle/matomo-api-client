@@ -1,7 +1,9 @@
 <?php
 
 /**
- * tomkyle/matomo-api-client (https://github.com/tomkyle/matomo-api-client)
+ * This file is part of tomkyle/matomo-api-client
+ *
+ * Client library for interacting with the Matomo API. Supports retry logic and PSR-6 caches.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,15 +13,19 @@ declare(strict_types=1);
 
 namespace tests\Unit;
 
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 use tomkyle\MatomoApiClient\MatomoApiClientInterface;
 use tomkyle\MatomoApiClient\Psr6CacheMatomoApiClient;
 
+/**
+ * @internal
+ */
+#[CoversNothing]
 class Psr6CacheMatomoApiClientTest extends TestCase
 {
     private CacheItemPoolInterface $cacheItemPool;
@@ -57,29 +63,33 @@ class Psr6CacheMatomoApiClientTest extends TestCase
     {
         $params = ['param1' => 'value1'];
         $method = 'SomeMethod';
-        $cacheKey = md5(http_build_query($params) . $method);
+        $cacheKey = md5(http_build_query($params).$method);
         $cachedResponse = ['key' => 'cachedValue'];
 
         $this->cacheItemPool
             ->expects($this->once())
             ->method('getItem')
             ->with($cacheKey)
-            ->willReturn($this->cacheItem);
+            ->willReturn($this->cacheItem)
+        ;
 
         $this->cacheItem
             ->expects($this->once())
             ->method('isHit')
-            ->willReturn(true);
+            ->willReturn(true)
+        ;
 
         $this->cacheItem
             ->expects($this->once())
             ->method('get')
-            ->willReturn($cachedResponse);
+            ->willReturn($cachedResponse)
+        ;
 
         $this->logger
             ->expects($this->once())
             ->method('log')
-            ->with($this->equalTo('info'), $this->stringContains('Matomo API response found in cache'));
+            ->with($this->equalTo('info'), $this->stringContains('Matomo API response found in cache'))
+        ;
 
         $result = $this->psr6CacheMatomoApiClient->request($params, $method);
 
@@ -90,7 +100,7 @@ class Psr6CacheMatomoApiClientTest extends TestCase
     {
         $params = ['param1' => 'value1'];
         $method = 'SomeMethod';
-        $cacheKey = md5(http_build_query($params) . $method);
+        $cacheKey = md5(http_build_query($params).$method);
         $apiResponse = ['key' => 'apiValue'];
 
         $loggedMessages = [];
@@ -99,35 +109,41 @@ class Psr6CacheMatomoApiClientTest extends TestCase
             ->expects($this->once())
             ->method('getItem')
             ->with($cacheKey)
-            ->willReturn($this->cacheItem);
+            ->willReturn($this->cacheItem)
+        ;
 
         $this->cacheItem
             ->expects($this->once())
             ->method('isHit')
-            ->willReturn(false);
+            ->willReturn(false)
+        ;
 
         $this->matomoApiClient
             ->expects($this->once())
             ->method('request')
             ->with($params, $method)
-            ->willReturn($apiResponse);
+            ->willReturn($apiResponse)
+        ;
 
         $this->cacheItem
             ->expects($this->once())
             ->method('set')
-            ->with($apiResponse);
+            ->with($apiResponse)
+        ;
 
         $this->cacheItemPool
             ->expects($this->once())
             ->method('save')
-            ->with($this->cacheItem);
+            ->with($this->cacheItem)
+        ;
 
         $this->logger
             ->expects($this->exactly(2))
             ->method('log')
             ->willReturnCallback(function ($level, $message) use (&$loggedMessages) {
                 $loggedMessages[] = ['level' => $level, 'message' => $message];
-            });
+            })
+        ;
 
         $result = $this->psr6CacheMatomoApiClient->request($params, $method);
 
@@ -142,10 +158,9 @@ class Psr6CacheMatomoApiClientTest extends TestCase
         $this->assertStringContainsString('Matomo API response stored in cache', $loggedMessages[1]['message']);
     }
 
-
     /**
      * Tests the generation of deterministic cache keys.
-     * #[DataProvider('provideCacheKeyData')]
+     * #[DataProvider('provideCacheKeyData')].
      */
     #[DataProvider('provideCacheKeyData')]
     public function testGenerateCacheKey(array $params, ?string $method, string $expectedKey): void
@@ -166,17 +181,17 @@ class Psr6CacheMatomoApiClientTest extends TestCase
             'Simple params with method' => [
                 ['param1' => 'value1'],
                 'methodName',
-                md5(http_build_query(['param1' => 'value1']) . 'methodName'),
+                md5(http_build_query(['param1' => 'value1']).'methodName'),
             ],
             'Sorted params' => [
                 ['b' => '2', 'a' => '1'],
                 'methodName',
-                md5(http_build_query(['a' => '1', 'b' => '2']) . 'methodName'),
+                md5(http_build_query(['a' => '1', 'b' => '2']).'methodName'),
             ],
             'No method' => [
                 ['param1' => 'value1'],
                 null,
-                md5(http_build_query(['param1' => 'value1']) . ''),
+                md5(http_build_query(['param1' => 'value1']).''),
             ],
             'Empty params and null method' => [
                 [],
@@ -185,5 +200,4 @@ class Psr6CacheMatomoApiClientTest extends TestCase
             ],
         ];
     }
-
 }

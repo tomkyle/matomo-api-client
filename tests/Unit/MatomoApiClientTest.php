@@ -1,7 +1,9 @@
 <?php
 
 /**
- * tomkyle/matomo-api-client (https://github.com/tomkyle/matomo-api-client)
+ * This file is part of tomkyle/matomo-api-client
+ *
+ * Client library for interacting with the Matomo API. Supports retry logic and PSR-6 caches.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -9,18 +11,24 @@
 
 namespace tests\Unit;
 
-use PHPUnit\Framework\TestCase;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Exception\RequestException;
-use Psr\Log\NullLogger;
-use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\HttpFactory;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Uri;
+use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 use tomkyle\MatomoApiClient\MatomoApiClient;
 use tomkyle\MatomoApiClient\MatomoApiClientException;
 
+/**
+ * @internal
+ */
+#[CoversNothing]
 class MatomoApiClientTest extends TestCase
 {
     private $api;
@@ -125,7 +133,7 @@ class MatomoApiClientTest extends TestCase
     public function testRequestCurlError()
     {
         $mockHandler = new MockHandler([
-            new RequestException('cURL error message', new \GuzzleHttp\Psr7\Request('GET', 'test')),
+            new RequestException('cURL error message', new Request('GET', 'test')),
         ]);
         $handlerStack = HandlerStack::create($mockHandler);
         $httpClient = new Client(['handler' => $handlerStack]);

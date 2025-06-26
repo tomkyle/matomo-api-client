@@ -1,7 +1,9 @@
 <?php
 
 /**
- * tomkyle/matomo-api-client (https://github.com/tomkyle/matomo-api-client)
+ * This file is part of tomkyle/matomo-api-client
+ *
+ * Client library for interacting with the Matomo API. Supports retry logic and PSR-6 caches.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,15 +13,19 @@ declare(strict_types=1);
 
 namespace tests\Unit;
 
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 use Psr\Log\LogLevel;
 use tomkyle\MatomoApiClient\MatomoApiClientException;
 use tomkyle\MatomoApiClient\MatomoApiClientInterface;
 use tomkyle\MatomoApiClient\RetryingMatomoApiClient;
 
+/**
+ * @internal
+ */
+#[CoversNothing]
 class RetryingMatomoApiClientTest extends TestCase
 {
     private MatomoApiClientInterface $matomoApiClient;
@@ -54,7 +60,8 @@ class RetryingMatomoApiClientTest extends TestCase
             ->expects($this->once())
             ->method('request')
             ->with($params, $method)
-            ->willReturn($expectedResult);
+            ->willReturn($expectedResult)
+        ;
 
         $result = $this->retryingMatomoApiClient->request($params, $method);
 
@@ -73,7 +80,8 @@ class RetryingMatomoApiClientTest extends TestCase
             ->expects($this->exactly(3)) // 3 attempts
             ->method('request')
             ->with($params, $method)
-            ->willThrowException(new MatomoApiClientException('Request failed.'));
+            ->willThrowException(new MatomoApiClientException('Request failed.'))
+        ;
 
         $logMessages = [];
         $this->logger
@@ -81,7 +89,8 @@ class RetryingMatomoApiClientTest extends TestCase
             ->method('log')
             ->willReturnCallback(function (string $level, string $message) use (&$logMessages) {
                 $logMessages[] = [$level, $message];
-            });
+            })
+        ;
 
         $this->expectException(MatomoApiClientException::class);
 
@@ -96,10 +105,9 @@ class RetryingMatomoApiClientTest extends TestCase
         $this->assertStringContainsString('failed after', $logMessages[1][1]);
     }
 
-
     /**
      * Tests that retries respect the configured retry count.
-     * #[DataProvider('provideRetryData')]
+     * #[DataProvider('provideRetryData')].
      */
     #[DataProvider('provideRetryData')]
     public function testRetriesRespectRetryCount(int $attempts, int $expectedAttempts): void
@@ -113,7 +121,8 @@ class RetryingMatomoApiClientTest extends TestCase
             ->expects($this->exactly($expectedAttempts))
             ->method('request')
             ->with($params, $method)
-            ->willThrowException(new MatomoApiClientException('Request failed.'));
+            ->willThrowException(new MatomoApiClientException('Request failed.'))
+        ;
 
         $this->expectException(MatomoApiClientException::class);
 
